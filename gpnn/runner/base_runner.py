@@ -40,6 +40,9 @@ class BaseRunner(object):
 
     self._tf_config = tf.ConfigProto(allow_soft_placement=(not self._gpu_only))
     if self._is_distributed:
+      self._tf_config.gpu_options.allow_growth = True
+      self._tf_config.gpu_options.visible_device_list = str(hvd.local_rank())
+
       bcast_hook = hvd.BroadcastGlobalVariablesHook(0)
       self._session = tf.Session(graph=tf_graph, config=self._tf_config, hooks=[bcast_hook])
     else:
