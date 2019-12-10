@@ -2,6 +2,8 @@ import os
 import tensorflow as tf
 from tensorflow.python.client import timeline
 
+import horovod.tensorflow as hvd
+
 from gpnn.utils.logger import get_logger
 from gpnn.factory import (ReaderFactory, ModelFactory)
 
@@ -37,7 +39,11 @@ class BaseRunner(object):
       self._run_metadata = tf.RunMetadata()
 
     self._tf_config = tf.ConfigProto(allow_soft_placement=(not self._gpu_only))
-    self._session = tf.Session(graph=tf_graph, config=self._tf_config)
+    if self._is_distributed:
+      bcast_hook = hvd.BroadcastGlobalVariablesHook(0)
+      self._session = tf.Session(graph=tf_graph, config=self._tf_config, hooks=[bcast_hook])
+    else:
+      self._session = tf.Session(graph=tf_graph, config=self._tf_config)
     self._session.run(self._model.ops["init"])
 
   def _save_model(self, save_name):

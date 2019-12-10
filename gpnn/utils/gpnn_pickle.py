@@ -9,7 +9,7 @@ except ModuleNotFoundError:
 
 
 def load(*args, **kwargs):
-  if sys.version_info > (3, 0):
+  if sys.version_info > (3, 0): # is using python3, uncomment it
     return pickle.load(*args, **kwargs, encoding='latin1')
   else:
     return pickle.load(*args, **kwargs)

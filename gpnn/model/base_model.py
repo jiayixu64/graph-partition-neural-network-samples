@@ -1,5 +1,6 @@
 import tensorflow as tf
 
+import horovod.tensorflow as hvd
 
 class BaseModel(object):
   """ abstract base class of a generic model """
@@ -44,6 +45,10 @@ class BaseModel(object):
       optimizer = tf.train.AdamOptimizer(learn_rate, epsilon=1e-7)
     else:
       raise ValueError("Unsupported Optimizer!")
+
+    if self._is_distributed :
+      hvd.init()
+      optimizer = hvd.DistributedOptimizer(optimizer)
 
     if self._is_clip_grad:
       # clip-gradient
