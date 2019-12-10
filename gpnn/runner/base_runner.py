@@ -22,7 +22,7 @@ class BaseRunner(object):
     attr_list = [
         "gpu_only", "save_dir", "is_resume_training", "resume_model_path",
         "test_model_path", "early_stop_window", "display_iter", "valid_iter",
-        "snapshot_iter", "bat_size", "max_epoch", "is_profile"
+        "snapshot_iter", "bat_size", "max_epoch", "is_profile", "is_distributed"
     ]
 
     for key in attr_list:
