@@ -43,10 +43,15 @@ class BaseRunner(object):
       self._tf_config.gpu_options.allow_growth = True
       self._tf_config.gpu_options.visible_device_list = str(hvd.local_rank())
 
+# Horovod: BroadcastGlobalVariablesHook broadcasts initial variable states
+# from rank 0 to all other processes. This is necessary to ensure consistent
+# initialization of all workers when training is started with random weights
+# or restored from a checkpoint.
+
       # bcast_hook = hvd.BroadcastGlobalVariablesHook(0)
       # self._session = tf.Session(graph=tf_graph, config=self._tf_config, hooks=[bcast_hook])
 
-      self._session = tf.Session(graph=tf_graph, config=self._tf_config) # since the random seed for parameters are the same for different nodes, probably no need to synchronize inital parameters
+      self._session = tf.Session(graph=tf_graph, config=self._tf_config) # since the random seed of initial parameters is the same for different nodes, probably no need to synchronize inital parameters
     else:
       self._session = tf.Session(graph=tf_graph, config=self._tf_config)
     self._session.run(self._model.ops["init"])
