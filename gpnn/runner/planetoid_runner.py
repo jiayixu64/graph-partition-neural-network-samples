@@ -13,6 +13,13 @@ from gpnn.utils.reader_helper import read_list_from_file
 from gpnn.utils.runner_helper import EarlyStopper, mkdir, convert_to_np_array_or_not
 from gpnn.utils.eval_helper import compute_accuracy, compute_acc_multiclass
 
+try:
+    # Python 2
+    xrange
+except NameError:
+    # Python 3, xrange is now named range
+    xrange = range
+
 logger = get_logger()
 register = RunnerFactory.register
 
