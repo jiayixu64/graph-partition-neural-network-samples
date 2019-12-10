@@ -150,8 +150,10 @@ class GPNNReader(object):
           data_dict[nn] = read_idx_file(
               os.path.join(self._data_folder, ".".join([base_name, ss])))
         else:
+          # data_dict[nn] = pickle.load(
+          #     open(os.path.join(self._data_folder, ".".join([base_name, ss]))))
           data_dict[nn] = pickle.load(
-              open(os.path.join(self._data_folder, ".".join([base_name, ss]))))
+              open(os.path.join(self._data_folder, ".".join([base_name, ss])), 'rb'))
 
       self._node_id = sorted(data_dict["graph"].keys())
       self._node_idx = range(len(self._node_id))

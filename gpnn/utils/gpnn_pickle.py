@@ -1,5 +1,6 @@
 # A compatability wrapper for the pickle module. cPickle was removed
 # in Python 3.
+import sys
 
 try:
   import cPickle as pickle
@@ -8,7 +9,10 @@ except ModuleNotFoundError:
 
 
 def load(*args, **kwargs):
-  return pickle.load(*args, **kwargs)
+  if sys.version_info > (3, 0):
+    return pickle.load(*args, **kwargs, encoding='latin1')
+  else:
+    return pickle.load(*args, **kwargs)
 
 
 def dump(*args, **kwargs):

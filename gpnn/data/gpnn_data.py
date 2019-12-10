@@ -1,10 +1,18 @@
 import json
 import numpy as np
 from collections import defaultdict
+from functools import reduce
 
 from gpnn.utils.spectral_graph_partition import spectral_clustering
 from gpnn.utils.flood_fill_partition import multi_seed_flood_fill
 from gpnn.utils.logger import get_logger
+
+try:
+    # Python 2
+    xrange
+except NameError:
+    # Python 3, xrange is now named range
+    xrange = range
 
 logger = get_logger()
 

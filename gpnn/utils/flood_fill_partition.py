@@ -1,6 +1,14 @@
 import numpy as np
 from gpnn.utils.logger import get_logger
 
+try:
+    # Python 2
+    xrange
+except NameError:
+    # Python 3, xrange is now named range
+    xrange = range
+
+
 logger = get_logger()
 
 

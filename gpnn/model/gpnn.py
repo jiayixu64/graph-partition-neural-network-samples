@@ -9,6 +9,13 @@ from gpnn.model.model_helper import aggregate
 from gpnn.model.nn_cells import MLP, GRU, weight_variable
 from gpnn.utils.logger import get_logger
 
+try:
+    # Python 2
+    xrange
+except NameError:
+    # Python 3, xrange is now named range
+    xrange = range
+
 logger = get_logger()
 register = ModelFactory.register
 
