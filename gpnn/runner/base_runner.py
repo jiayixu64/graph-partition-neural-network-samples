@@ -43,8 +43,10 @@ class BaseRunner(object):
       self._tf_config.gpu_options.allow_growth = True
       self._tf_config.gpu_options.visible_device_list = str(hvd.local_rank())
 
-      bcast_hook = hvd.BroadcastGlobalVariablesHook(0)
-      self._session = tf.Session(graph=tf_graph, config=self._tf_config, hooks=[bcast_hook])
+      # bcast_hook = hvd.BroadcastGlobalVariablesHook(0)
+      # self._session = tf.Session(graph=tf_graph, config=self._tf_config, hooks=[bcast_hook])
+
+      self._session = tf.Session(graph=tf_graph, config=self._tf_config) # since the random seed for parameters are the same for different nodes, probably no need to synchronize inital parameters
     else:
       self._session = tf.Session(graph=tf_graph, config=self._tf_config)
     self._session.run(self._model.ops["init"])
