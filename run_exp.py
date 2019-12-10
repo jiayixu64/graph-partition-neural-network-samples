@@ -16,6 +16,8 @@ from gpnn.utils.runner_helper import mkdir
 
 np.set_printoptions(threshold=np.inf)
 
+import tensorflow as tf
+import horovod.tensorflow as hvd
 
 def get_param(config_file):
   """ Construct and snapshot hyper parameters """
@@ -51,6 +53,9 @@ def main():
   args = parse_arguments()
   param = get_param(args.config_file)
   np.random.seed(param["seed"])
+
+  if param["is_distributed"]:
+    hvd.init()
 
   # log info
   log_file = os.path.join(param["save_dir"],

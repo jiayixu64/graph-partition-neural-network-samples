@@ -28,6 +28,10 @@ class BaseModel(object):
   def _optimizer(self):
     # either use this function or inherit it and construct self._optimizer
     global_step = tf.Variable(0.0, trainable=False)
+
+    if self._is_distributed:
+      self._base_learn_rate *= hvd.size()
+
     learn_rate = tf.train.exponential_decay(
         self._base_learn_rate,
         global_step,
@@ -47,7 +51,6 @@ class BaseModel(object):
       raise ValueError("Unsupported Optimizer!")
 
     if self._is_distributed :
-      hvd.init()
       optimizer = hvd.DistributedOptimizer(optimizer)
 
     if self._is_clip_grad:
