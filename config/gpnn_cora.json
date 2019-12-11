@@ -12,7 +12,7 @@
   "msg_type": "msg_embedding", 
   "decomp_method": "spectral_cluster", 
   "num_pass": 5,
-  "num_cluster": 5,
+  "num_cluster": 8,
   "prop_step_intra": 1,
   "prop_step_inter": 1,  
   "hidden_dim": 128, 
