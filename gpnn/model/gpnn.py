@@ -486,6 +486,9 @@ class GPNN(BaseModel):
           is_cut_empty = tf.equal(
               tf.reduce_sum(self._partition_idx), self._num_nodes)
 
+          print(self._partition_idx)
+          dd
+
           ### synchoronous propagation within cut
           def prop_in_cut():
             with tf.variable_scope("cut"):
