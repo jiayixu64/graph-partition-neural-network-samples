@@ -3,6 +3,8 @@ from __future__ import (absolute_import, division, print_function)
 import numpy as np
 import tensorflow as tf
 
+import horovod.tensorflow as hvd
+
 from gpnn.factory import ModelFactory
 from gpnn.model.base_model import BaseModel
 from gpnn.model.model_helper import aggregate
@@ -432,7 +434,13 @@ class GPNN(BaseModel):
           node_vec_cluster_init = tf.split(
               self._node_vec[pp - 1], self._cluster_size_var, axis=0)
 
-          for ii in xrange(self._num_cluster):
+          start = 0
+          step = 1
+          if self._is_distributed:
+              start = hvd.rank()
+              step = hvd.size()
+
+          for ii in xrange(start, self._num_cluster, step):
             with tf.variable_scope("cluster_{}".format(ii)):
               # node representation
               node_vec_cluster[ii][-1] = node_vec_cluster_init[ii]
@@ -469,6 +477,8 @@ class GPNN(BaseModel):
                 else:
                   node_vec_cluster[ii][tt] = self._update_func(
                       message[:-1, :], node_vec_cluster[ii][tt - 1])
+
+          node_vec_cluster = list(filter(lambda xx: xx[-2] is not None, node_vec_cluster))
 
           ### update node representation
           node_vec = tf.concat([xx[-2] for xx in node_vec_cluster], axis=0)
