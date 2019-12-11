@@ -40,6 +40,6 @@
   "resume_model_path": "", 
   "test_model_path": "",
   "is_profile": false,
-  "max_epoch": 100,
+  "max_epoch": 2,
   "is_distributed": true
 }
