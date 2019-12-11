@@ -56,9 +56,7 @@ def main():
 
   if param["is_distributed"]:
     hvd.init()
-    print(param["max_epoch"])
-    param["max_epoch"] /= hvd.size()
-    print(param["max_epoch"])
+    param["max_epoch"] = int(param["max_epoch"] / hvd.size())
 
   # log info
   log_file = os.path.join(param["save_dir"],
