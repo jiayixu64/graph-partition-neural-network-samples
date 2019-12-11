@@ -28,7 +28,7 @@
   "momentum": 0.9, 
   "is_clip_grad": true, 
   "clip_val": 5.0, 
-  "early_stop_window": 10, 
+  "early_stop_window": 10000000000,
   "base_learn_rate": 1.0e-2, 
   "learn_rate_decay_rate": 0.1, 
   "learn_rate_decay_step": 100000,
