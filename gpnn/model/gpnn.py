@@ -395,6 +395,8 @@ class GPNN(BaseModel):
       feed_dict[self._node_mask_ph] = np.ones_like(
           data.node_gt_label, dtype=np.int32)
 
+    print(data.partition_idx)
+    dd
     feed_dict[self._partition_idx_ph] = data.partition_idx
     feed_dict[self._stitch_idx_ph[0]] = data.stitch_idx[0]
     feed_dict[self._stitch_idx_ph[1]] = data.stitch_idx[1]
