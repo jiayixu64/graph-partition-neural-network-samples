@@ -3,8 +3,6 @@ from __future__ import (absolute_import, division, print_function)
 import numpy as np
 import tensorflow as tf
 
-import horovod.tensorflow as hvd
-
 from gpnn.factory import ModelFactory
 from gpnn.model.base_model import BaseModel
 from gpnn.model.model_helper import aggregate
@@ -472,40 +470,11 @@ class GPNN(BaseModel):
                   node_vec_cluster[ii][tt] = self._update_func(
                       message[:-1, :], node_vec_cluster[ii][tt - 1])
 
-          # node_vec_cluster = list(filter(lambda xx: xx[-2] is not None, node_vec_cluster))
-
-          start = 0
-          step = 1
-          if self._is_distributed:
-              start = hvd.rank()
-              step = hvd.size()
-
-          node_vec_list = []
-          partition_idx_list = []
-          acc = 0
-          for ii in xrange(self._num_cluster):
-              if ii >= start and (ii-start) % step == 0:
-                node_vec_list.append(node_vec_cluster[ii][-2])
-                print(node_vec_cluster[ii][-2].shape)
-                dd
-                partition_idx_list.append(self._partition_idx[acc: acc + int(node_vec_cluster[ii][-2].shape[0])])
-              acc += int(node_vec_cluster[ii][-2].shape[0])
-
-          # ### update node representation
-          # node_vec = tf.concat([xx[-2] for xx in node_vec_cluster], axis=0)
-
-          node_vec = tf.concat(node_vec_list, axis=0)
-          partition_idx = tf.concat(partition_idx_list, axis=0)
-
-          print(node_vec.shape)
-          print(partition_idx.shape)
-          dd
+          ### update node representation
+          node_vec = tf.concat([xx[-2] for xx in node_vec_cluster], axis=0)
 
           is_cut_empty = tf.equal(
               tf.reduce_sum(self._partition_idx), self._num_nodes)
-
-          print(self._partition_idx)
-          dd
 
           ### synchoronous propagation within cut
           def prop_in_cut():
