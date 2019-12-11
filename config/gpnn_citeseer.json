@@ -12,7 +12,7 @@
   "msg_type": "msg_embedding", 
   "decomp_method": "multi_seed_flood_fill",
   "num_pass": 3,
-  "num_cluster": 10,
+  "num_cluster": 8,
   "prop_step_intra": 1,
   "prop_step_inter": 1,  
   "hidden_dim": 128, 
