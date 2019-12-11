@@ -395,8 +395,6 @@ class GPNN(BaseModel):
       feed_dict[self._node_mask_ph] = np.ones_like(
           data.node_gt_label, dtype=np.int32)
 
-    print(data.partition_idx)
-    dd
     feed_dict[self._partition_idx_ph] = data.partition_idx
     feed_dict[self._stitch_idx_ph[0]] = data.stitch_idx[0]
     feed_dict[self._stitch_idx_ph[1]] = data.stitch_idx[1]
@@ -436,13 +434,7 @@ class GPNN(BaseModel):
           node_vec_cluster_init = tf.split(
               self._node_vec[pp - 1], self._cluster_size_var, axis=0)
 
-          start = 0
-          step = 1
-          if self._is_distributed:
-              start = hvd.rank()
-              step = hvd.size()
-
-          for ii in xrange(start, self._num_cluster, step):
+          for ii in xrange(self._num_cluster):
             with tf.variable_scope("cluster_{}".format(ii)):
               # node representation
               node_vec_cluster[ii][-1] = node_vec_cluster_init[ii]
@@ -480,10 +472,32 @@ class GPNN(BaseModel):
                   node_vec_cluster[ii][tt] = self._update_func(
                       message[:-1, :], node_vec_cluster[ii][tt - 1])
 
-          node_vec_cluster = list(filter(lambda xx: xx[-2] is not None, node_vec_cluster))
+          # node_vec_cluster = list(filter(lambda xx: xx[-2] is not None, node_vec_cluster))
 
-          ### update node representation
-          node_vec = tf.concat([xx[-2] for xx in node_vec_cluster], axis=0)
+          start = 0
+          step = 1
+          if self._is_distributed:
+              start = hvd.rank()
+              step = hvd.size()
+
+          node_vec_list = []
+          partition_idx_list = []
+          acc = 0
+          for ii in xrange(self._num_cluster):
+              if ii >= start and (ii-start) % step == 0:
+                node_vec_list.append(node_vec_cluster[ii][-2])
+                partition_idx_list.append(self._partition_idx[acc: acc + node_vec_cluster[ii][-2].shape[0]])
+              acc += node_vec_cluster[ii][-2].shape[0]
+
+          # ### update node representation
+          # node_vec = tf.concat([xx[-2] for xx in node_vec_cluster], axis=0)
+
+          node_vec = tf.concat(node_vec_list, axis=0)
+          partition_idx = tf.concat(partition_idx_list, axis=0)
+
+          print(node_vec.shape)
+          print(partition_idx.shape)
+          dd
 
           is_cut_empty = tf.equal(
               tf.reduce_sum(self._partition_idx), self._num_nodes)
