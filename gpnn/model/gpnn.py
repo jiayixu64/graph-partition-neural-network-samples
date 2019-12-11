@@ -486,8 +486,8 @@ class GPNN(BaseModel):
           for ii in xrange(self._num_cluster):
               if ii >= start and (ii-start) % step == 0:
                 node_vec_list.append(node_vec_cluster[ii][-2])
-                partition_idx_list.append(self._partition_idx[acc: acc + node_vec_cluster[ii][-2].shape.as_list()[0]])
-              acc += node_vec_cluster[ii][-2].shape.as_list()[0]
+                partition_idx_list.append(self._partition_idx[acc: acc + int(node_vec_cluster[ii][-2].shape[0])])
+              acc += int(node_vec_cluster[ii][-2].shape[0])
 
           # ### update node representation
           # node_vec = tf.concat([xx[-2] for xx in node_vec_cluster], axis=0)
