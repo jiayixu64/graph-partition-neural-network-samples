@@ -478,7 +478,7 @@ class GPNN(BaseModel):
                   node_vec_cluster[ii][tt] = self._update_func(
                       message[:-1, :], node_vec_cluster[ii][tt - 1])
 
-          # node_vec_cluster = list(filter(lambda xx: xx[-2] is not None, node_vec_cluster))
+          node_vec_cluster = list(filter(lambda xx: xx[-2] is not None, node_vec_cluster))
 
           ### update node representation
           node_vec = tf.concat([xx[-2] for xx in node_vec_cluster], axis=0)
